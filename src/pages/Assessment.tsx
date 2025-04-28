@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -228,6 +227,7 @@ const Assessment = () => {
   const [answers, setAnswers] = useState<Record<number, number>>({})
   const [submitted, setSubmitted] = useState(false)
   const [score, setScore] = useState(0)
+  const [step, setStep] = useState<1 | 2>(1)
   const { toast } = useToast()
   const { isAuthenticated } = useAuthStore()
 
@@ -282,11 +282,30 @@ const Assessment = () => {
     setAnswers({})
     setSubmitted(false)
     setScore(0)
+    setStep(1)
+    setCurrentType('gad7')
   }
 
-  const handleSwitchAssessment = (type: AssessmentType) => {
-    handleReset()
-    setCurrentType(type)
+  const handleNext = () => {
+    const gad7Questions = assessmentData.gad7.questions
+    const answeredGad7Questions = gad7Questions.filter(q => answers[q.id] !== undefined)
+    
+    if (answeredGad7Questions.length !== gad7Questions.length) {
+      toast({
+        title: "Incomplete GAD-7 assessment",
+        description: "Please answer all anxiety assessment questions before proceeding",
+        variant: "destructive",
+      })
+      return
+    }
+    
+    setStep(2)
+    setCurrentType('phq9')
+  }
+
+  const handleBack = () => {
+    setStep(1)
+    setCurrentType('gad7')
   }
 
   const currentAssessment = assessmentData[currentType]
@@ -309,7 +328,20 @@ const Assessment = () => {
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl md:text-3xl">{currentAssessment.title}</CardTitle>
                 <CardDescription className="text-base mt-2">{currentAssessment.description}</CardDescription>
+                
+                <div className="flex justify-center mt-4">
+                  <div className="flex items-center">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === 1 ? 'bg-primary text-primary-foreground' : 'bg-primary/20'}`}>
+                      1
+                    </div>
+                    <div className={`h-1 w-12 ${step === 2 ? 'bg-primary' : 'bg-primary/20'}`}></div>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === 2 ? 'bg-primary text-primary-foreground' : 'bg-primary/20'}`}>
+                      2
+                    </div>
+                  </div>
+                </div>
               </CardHeader>
+              
               <CardContent className="space-y-6">
                 {currentAssessment.questions.map((question) => (
                   <div key={question.id} className="p-4 rounded-lg border border-border bg-white">
@@ -332,26 +364,22 @@ const Assessment = () => {
                   </div>
                 ))}
               </CardContent>
+              
               <CardFooter className="flex flex-col gap-4">
-                <Button onClick={handleSubmit} className="zenora-button-primary w-full">
-                  Submit Assessment
-                </Button>
-                <div className="flex gap-2 w-full">
-                  <Button 
-                    onClick={() => handleSwitchAssessment('gad7')}
-                    variant={currentType === 'gad7' ? 'default' : 'outline'}
-                    className="w-1/2"
-                  >
-                    Anxiety Assessment
+                {step === 1 ? (
+                  <Button onClick={handleNext} className="zenora-button-primary w-full">
+                    Next: Depression Assessment
                   </Button>
-                  <Button 
-                    onClick={() => handleSwitchAssessment('phq9')}
-                    variant={currentType === 'phq9' ? 'default' : 'outline'}
-                    className="w-1/2"
-                  >
-                    Depression Assessment
-                  </Button>
-                </div>
+                ) : (
+                  <div className="flex w-full gap-3">
+                    <Button onClick={handleBack} variant="outline" className="w-1/3">
+                      Back
+                    </Button>
+                    <Button onClick={handleSubmit} className="zenora-button-primary w-2/3">
+                      Submit Assessment
+                    </Button>
+                  </div>
+                )}
               </CardFooter>
             </Card>
           ) : (
