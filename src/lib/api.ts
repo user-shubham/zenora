@@ -24,84 +24,52 @@ api.interceptors.request.use((config) => {
 // Auth services
 export const authService = {
   login: async (email: string, password: string) => {
-    try {
-      const response = await api.post('/api/auth/login', { email, password })
-      return response.data
-    } catch (error) {
-      throw error
-    }
+    const response = await api.post('/api/auth/login', { email, password })
+    return response.data
   },
 
   signup: async (name: string, email: string, password: string) => {
-    try {
-      const response = await api.post('/api/auth/signup', { name, email, password })
-      return response.data
-    } catch (error) {
-      throw error
-    }
+    const response = await api.post('/api/auth/signup', { name, email, password })
+    return response.data
   },
 }
 
 // Assessment services
 export const assessmentService = {
   saveAssessment: async (data: any) => {
-    try {
-      const response = await api.post('/api/assessments', data)
-      return response.data
-    } catch (error) {
-      throw error
-    }
+    const response = await api.post('/api/assessments', data)
+    return response.data
   },
 
   getAssessments: async () => {
-    try {
-      const response = await api.get('/api/assessments')
-      return response.data
-    } catch (error) {
-      throw error
-    }
+    const response = await api.get('/api/assessments')
+    return response.data
   },
 }
 
 // Journal services
 export const journalService = {
   saveJournal: async (data: any) => {
-    try {
-      const response = await api.post('/api/journal', data)
-      return response.data
-    } catch (error) {
-      throw error
-    }
+    const response = await api.post('/api/journal', data)
+    return response.data
   },
 
   getJournals: async () => {
-    try {
-      const response = await api.get('/api/journal')
-      return response.data
-    } catch (error) {
-      throw error
-    }
+    const response = await api.get('/api/journal')
+    return response.data
   },
 }
 
 // Chat services
 export const chatService = {
   sendMessage: async (message: string) => {
-    try {
-      const response = await api.post('/api/chat', { message })
-      return response.data
-    } catch (error) {
-      throw error
-    }
+    const response = await api.post('/api/chat', { message })
+    return response.data
   },
 
   getMessages: async () => {
-    try {
-      const response = await api.get('/api/chat')
-      return response.data
-    } catch (error) {
-      throw error
-    }
+    const response = await api.get('/api/chat')
+    return response.data
   },
 }
 

@@ -1,52 +1,47 @@
 
-import { useRef } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Sphere } from '@react-three/drei'
-import { Group } from 'three'
+import { motion } from 'framer-motion';
+import React from 'react';
 
-const FloatingObjects = () => {
-  const groupRef = useRef<Group>(null)
-
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = state.clock.getElapsedTime() * 0.05
-    }
-  })
+const FloatingBackground: React.FC = () => {
+  const bubbles = [
+    { color: "#E5DEFF", size: "15rem", delay: 0, duration: 25 },
+    { color: "#D3F4E5", size: "12rem", delay: 5, duration: 30 },
+    { color: "#D3E4FD", size: "18rem", delay: 2, duration: 35 },
+    { color: "#FDE1D3", size: "10rem", delay: 8, duration: 40 },
+    { color: "#FFDEE2", size: "14rem", delay: 15, duration: 45 },
+  ];
 
   return (
-    <group ref={groupRef}>
-      {/* Soft pastel colored spheres */}
-      <Sphere args={[0.6, 32, 32]} position={[-4, 1, -5]}>
-        <meshBasicMaterial color="#E5DEFF" transparent opacity={0.6} />
-      </Sphere>
-      
-      <Sphere args={[0.8, 32, 32]} position={[5, -2, -8]}>
-        <meshBasicMaterial color="#D3F4E5" transparent opacity={0.4} />
-      </Sphere>
-      
-      <Sphere args={[1.2, 32, 32]} position={[2, 3, -10]}>
-        <meshBasicMaterial color="#D3E4FD" transparent opacity={0.5} />
-      </Sphere>
-      
-      <Sphere args={[0.7, 32, 32]} position={[-3, -2.5, -6]}>
-        <meshBasicMaterial color="#FDE1D3" transparent opacity={0.6} />
-      </Sphere>
-      
-      <Sphere args={[0.5, 32, 32]} position={[4, 0, -5]}>
-        <meshBasicMaterial color="#E897B9" transparent opacity={0.3} />
-      </Sphere>
-    </group>
-  )
-}
-
-const FloatingBackground = () => {
-  return (
-    <div className="fixed top-0 left-0 w-full h-full -z-10">
-      <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-        <FloatingObjects />
-      </Canvas>
+    <div className="fixed inset-0 -z-10 overflow-hidden">
+      {bubbles.map((bubble, index) => (
+        <motion.div
+          key={index}
+          className="absolute rounded-full opacity-20"
+          style={{ 
+            backgroundColor: bubble.color,
+            width: bubble.size,
+            height: bubble.size,
+          }}
+          initial={{ 
+            x: `${Math.random() * 100}%`, 
+            y: `${Math.random() * 100}%` 
+          }}
+          animate={{ 
+            x: [`${Math.random() * 100}%`, `${Math.random() * 100}%`],
+            y: [`${Math.random() * 100}%`, `${Math.random() * 100}%`],
+          }}
+          transition={{ 
+            repeat: Infinity, 
+            repeatType: "reverse", 
+            duration: bubble.duration, 
+            delay: bubble.delay,
+            ease: "easeInOut"
+          }}
+        />
+      ))}
+      <div className="absolute inset-0 backdrop-blur-[100px]" />
     </div>
-  )
-}
+  );
+};
 
-export default FloatingBackground
+export default FloatingBackground;
